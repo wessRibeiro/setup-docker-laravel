@@ -44,24 +44,18 @@ services:
             - laravel
 
     # queue
-    queue:
-        image: especializati/laravel9-app
-        restart: unless-stopped
-        command: "php artisan queue:work"
+    rabbitmq:
+        image: rabbitmq:3.10-management
+        container_name: rabbitmq
+        restart: always
+        ports:
+            - 5672:5672
+            - 15672:15672
         volumes:
-            - ./:/var/www
-        depends_on:
-            - redis
-            - app
-        networks:
-            - laravel
-
-    # redis
-    redis:
-        image: redis:latest
-        networks:
-            - laravel
-
+            - ./dados:/var/lib/rabbitmq/
+        environment:
+            - RABBITMQ_DEFAULT_USER=wess
+            - RABBITMQ_DEFAULT_PASS=wess
 networks:
     laravel:
         driver: bridge
